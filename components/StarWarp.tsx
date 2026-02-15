@@ -9,60 +9,100 @@ interface StarWarpProps {
 
 export default function StarWarp({ speed = 2, starCount = 6000 }: StarWarpProps) {
   const mountRef = useRef<HTMLDivElement>(null);
-  const speedRef = useRef(speed); // ใช้ Ref เก็บความเร็วเพื่อความลื่นไหล
-
-  // อัปเดตความเร็วเข้า Ref เมื่อ Prop เปลี่ยน
-  useEffect(() => { speedRef.current = speed; }, [speed]);
+  const speedRef = useRef(speed);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const animationRef = useRef<number>(0);
 
   useEffect(() => {
-    if (!mountRef.current) return;
+    speedRef.current = speed;
+  }, [speed]);
+
+  useEffect(() => {
+    const container = mountRef.current;
+    if (!container) return;
+
+    // ป้องกัน mount ซ้ำ (React StrictMode)
+    if (rendererRef.current) return;
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.z = 1; camera.rotation.x = Math.PI / 2;
+    const camera = new THREE.PerspectiveCamera(60, w / h, 1, 1000);
+    camera.position.z = 1;
+    camera.rotation.x = Math.PI / 2;
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    mountRef.current.appendChild(renderer.domElement);
+    const renderer = new THREE.WebGLRenderer({ antialias: false });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(w, h);
+    renderer.setClearColor(0x000000, 1);
+    container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
-    const starGeo = new THREE.BufferGeometry();
+    // สร้างดาว
     const positions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i++) {
-      positions[i * 3] = Math.random() * 600 - 300;
+      positions[i * 3]     = Math.random() * 600 - 300;
       positions[i * 3 + 1] = Math.random() * 600 - 300;
       positions[i * 3 + 2] = Math.random() * 600 - 300;
     }
-    starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const starMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.7, transparent: true, opacity: 0.8 });
-    const stars = new THREE.Points(starGeo, starMaterial);
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const material = new THREE.PointsMaterial({
+      color: 0xcccccc,
+      size: 0.7,
+      transparent: true,
+      opacity: 0.9,
+    });
+
+    const stars = new THREE.Points(geometry, material);
     scene.add(stars);
 
-    let animationId: number;
+    // Animation loop
     const animate = () => {
-      const pos = stars.geometry.attributes.position.array as Float32Array;
+      const pos = geometry.attributes.position.array as Float32Array;
+
       for (let i = 0; i < starCount; i++) {
-        pos[i * 3 + 1] -= speedRef.current; // ใช้ความเร็วจาก Ref
-        if (pos[i * 3 + 1] < -200) pos[i * 3 + 1] = 200;
+        pos[i * 3 + 1] -= speedRef.current;
+        if (pos[i * 3 + 1] < -300) {
+          pos[i * 3 + 1] = 300;
+        }
       }
-      stars.geometry.attributes.position.needsUpdate = true;
+
+      geometry.attributes.position.needsUpdate = true;
       stars.rotation.y += 0.002;
+
       renderer.render(scene, camera);
-      animationId = requestAnimationFrame(animate);
+      animationRef.current = requestAnimationFrame(animate);
     };
+
     animate();
 
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      const newW = window.innerWidth;
+      const newH = window.innerHeight;
+      camera.aspect = newW / newH;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(newW, newH);
     };
     window.addEventListener('resize', handleResize);
+
     return () => {
       window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationId);
-      if (mountRef.current) mountRef.current.removeChild(renderer.domElement);
-      starGeo.dispose(); starMaterial.dispose(); renderer.dispose();
+      cancelAnimationFrame(animationRef.current);
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+      rendererRef.current = null;
     };
-  }, [starCount]); // รันแค่รอบเดียวตอน Mount
+  }, [starCount]);
 
-  return <div ref={mountRef} className="fixed inset-0 z-0 bg-black" />;
+  // ❌ ลบ bg-black ออก เพราะ renderer.setClearColor จัดการเองแล้ว
+  // ❌ ลบ fixed inset-0 ออก เพราะ parent div จัดการ layout แล้ว
+  return <div ref={mountRef} className="w-full h-full" />;
 }
