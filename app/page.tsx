@@ -4,8 +4,8 @@ import StarWarp from '@/components/StarWarp';
 import FloatingModel from '@/components/FloatingModel';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowRight, Github, Mail, Smartphone, Code, Layers,
-  Award, User, ChevronDown, ExternalLink, Cpu, MapPin,
+  ArrowRight, Github, Mail, Code, Layers,
+  ChevronDown, Cpu, MapPin,
   Terminal, ArrowUpRight
 } from 'lucide-react';
 import Link from 'next/link';
