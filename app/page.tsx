@@ -18,7 +18,7 @@
     fullName: "Mark Multiverse",
     role: "Mobile Developer",
     oneLiner: "Crafting High-Performance Mobile Apps with Architecture in Mind",
-    email: "chinnawong554@gmail.com", // แก้ไขเป็นอีเมลของคุณแล้วครับ
+    email: "chinnawong554@gmail.com",
     github: "https://github.com/MarkCnw",
     location: "Korat, Thailand",
     projects: [
@@ -119,9 +119,17 @@
 
     return (
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-6 md:px-12 backdrop-blur-sm bg-black/20 border-b border-white/5">
-        <Link href="/" className="text-xl font-bold tracking-tight text-white hover:text-cyan-400 transition-colors">
-          MARK<span className="text-cyan-400">.</span>DEV
+        <Link href="/" className="hover:opacity-80 transition-opacity">
+          {/* แก้ไข: ปรับขนาดเป็น width={64}, height={64} และ className="w-16 h-16" */}
+          <Image 
+            src="/emoji.png" 
+            alt="Logo" 
+            width={64} 
+            height={64} 
+            className="w-16 h-16 object-contain hover:scale-110 transition-transform duration-300" 
+          />
         </Link>
+        
         <div className="hidden md:flex items-center gap-8">
           {links.map((link) => (
             <Link key={link.name} href={link.href} className="text-sm font-medium text-gray-400 hover:text-white transition-colors uppercase tracking-wider">
@@ -334,7 +342,6 @@
                 </motion.div>
               </section>
 
-              {/* FEATURED PROJECTS */}
               {/* FEATURED PROJECTS - TECH STACK STYLE 100% */}
               <section id="projects" className="px-6 py-32 max-w-6xl mx-auto">
                 <SectionLabel>Featured Projects</SectionLabel>
@@ -386,6 +393,7 @@
                   })}
                 </motion.div>
               </section>
+
               {/* JOURNEY, ABOUT, FOOTER (PRESERVED 100%) */}
               <section id="journey" className="px-6 py-32 max-w-6xl mx-auto"><SectionLabel>Journey</SectionLabel><motion.div variants={stagger.container} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="space-y-2">{MY_DATA.timeline.map((item, i) => { const a = accentMap[item.accent] || accentMap.cyan; return (<motion.div key={i} variants={stagger.item} className="group grid grid-cols-[140px_1fr] md:grid-cols-[200px_1fr] gap-8 py-10 border-b border-white/[0.04] last:border-0"><div className={`text-base md:text-lg font-mono ${a.text} opacity-60 pt-1`}>{item.year}</div><div><h4 className="text-xl md:text-2xl font-bold text-white mb-2">{item.title}</h4><p className="text-base md:text-lg text-gray-500 mb-3">{item.sub}</p><p className="text-base md:text-lg text-gray-400 leading-relaxed">{item.desc}</p></div></motion.div>); })}</motion.div></section>
               <section id="about" className="px-6 py-32 max-w-6xl mx-auto"><SectionLabel>About</SectionLabel><motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="max-w-4xl"><p className="text-2xl md:text-4xl text-gray-300 leading-relaxed font-light mb-10">&ldquo;ผมเชื่อว่า Code ที่ดีไม่ใช่แค่ทำงานได้ แต่ต้องอ่านรู้เรื่องและดูแลง่าย&rdquo;</p><p className="text-lg md:text-xl text-gray-500 leading-relaxed mb-12">จากความมุ่งมั่นที่อยากสร้างผลิตภัณฑ์ของตัวเอง ที่ตอบโจทย์ทั้งด้านประสิทธิภาพและความยืดหยุ่น ในการออกแบบโครงสร้างโค้ดที่สะอาดและยั่งยืน โดยมีเป้าหมายที่จะก้าวเป็น Senior Developer ผู้เชี่ยวชาญการวางระบบ Scalable Architecture สำหรับแอปพลิเคชันระดับ Enterprise</p><div className="flex flex-wrap gap-x-8 gap-y-4 text-base md:text-lg text-gray-600"><span className="flex items-center gap-2">🏋️ ชอบออกกำลังกาย</span><span className="flex items-center gap-2">🎮 เล่นเกมแนว Strategy</span><span className="flex items-center gap-2">🎬 ติดหนัง Dark Fantasy</span></div></motion.div></section>
