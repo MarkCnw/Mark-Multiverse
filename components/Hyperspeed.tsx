@@ -1223,8 +1223,10 @@ const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = DEFAULT_EFFECT_OPTION
   const appRef = useRef<App | null>(null);
 
   useEffect(() => {
+    // Cleanup function
     if (appRef.current) {
       appRef.current.dispose();
+      // ล้าง Canvas เก่าออกถ้ามีค้างอยู่
       const container = document.getElementById('lights');
       if (container) {
         while (container.firstChild) {
@@ -1236,7 +1238,28 @@ const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = DEFAULT_EFFECT_OPTION
     const container = hyperspeed.current;
     if (!container) return;
 
-    const options: HyperspeedOptions = { ...defaultOptions, ...effectOptions, colors: { ...defaultOptions.colors, ...effectOptions.colors } };
+    // --- 📱 MOBILE RESPONSIVE LOGIC ---
+    // ตรวจสอบความกว้างหน้าจอ ถ้าต่ำกว่า 768px (iPad/Mobile) ให้ปรับค่า Config
+    const isMobile = window.innerWidth < 768;
+    
+    const mobileOverrides: Partial<HyperspeedOptions> = isMobile ? {
+      roadWidth: 5,           // ลดความกว้างถนนจาก 10 เหลือ 5
+      islandWidth: 1,         // ลดเกาะกลางจาก 2 เหลือ 1
+      lanesPerRoad: 3,        // ลดจำนวนเลนเหลือ 3 (จาก 4) เพื่อไม่ให้แออัด
+      fov: 110,               // เพิ่มมุมมองกล้อง (FOV) จาก 90 เป็น 110 เพื่อให้เห็นภาพกว้างขึ้นในแนวตั้ง
+      speedUp: 3,             // เพิ่มความเร็วตอนเร่งนิดหน่อยให้ดูสนุกขึ้นบนจอเล็ก
+      carLightsRadius: [0.03, 0.08], // ลดขนาดดวงไฟรถให้สมส่วนกับถนน
+      lightStickWidth: [0.06, 0.25], // ลดขนาดไฟข้างทาง
+    } : {};
+
+    // รวม Config: Default + Custom Options + Mobile Overrides
+    const options: HyperspeedOptions = { 
+      ...defaultOptions, 
+      ...effectOptions, 
+      ...mobileOverrides, // ทับด้วยค่า Mobile ถ้าเป็นจอเล็ก
+      colors: { ...defaultOptions.colors, ...effectOptions.colors } 
+    };
+
     if (typeof options.distortion === 'string') {
       options.distortion = distortions[options.distortion];
     }
