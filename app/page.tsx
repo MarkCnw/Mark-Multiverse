@@ -136,9 +136,7 @@
               {link.name}
             </Link>
           ))}
-          <a href="/resume.pdf" target="_blank" className="px-5 py-2 text-xs font-bold text-black bg-white rounded-full hover:bg-cyan-400 transition-colors uppercase tracking-wide">
-            Resume
-          </a>
+          
         </div>
         <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-white p-2">
           {isOpen ? <X /> : <Menu />}
@@ -285,7 +283,7 @@
                       </motion.p>
                       <motion.div variants={stagger.item} className="flex flex-wrap gap-4 pt-4">
                         <Link href="#projects" className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-black rounded-full text-base md:text-lg font-semibold hover:bg-cyan-400 transition-all duration-300">ดูผลงาน <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" /></Link>
-                        <Link href="/resume.pdf" target="_blank" className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base md:text-lg font-semibold border border-white/10 text-gray-300 hover:border-white/30 hover:text-white transition-all duration-300 backdrop-blur-sm">Resume</Link>
+                      
                       </motion.div>
                     </motion.div>
                     <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5, duration: 0.8 }} className="relative flex-shrink-0 mx-auto md:mx-0 mt-8 md:mt-0 z-10">
